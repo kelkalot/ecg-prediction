@@ -1,5 +1,6 @@
-from keras.layers import Input, Dense, Flatten
-from keras.models import Sequential
+from keras.layers import Input, Dense, Flatten, Dropout
+from keras.layers import Conv1D, MaxPooling1D, GlobalAveragePooling1D
+
 from keras.models import Model
 
 class ECGModel():
@@ -18,15 +19,34 @@ class ECGModel():
 
     def save(self, path):
         self.model.save(path)
-    
+
     def build_model(self):
         inputs = Input(shape=self.input_shape)
 
-        x = Dense(32, activation='relu')(inputs)
         x = Dense(64, activation='relu')(inputs)
-        x = Dense(128, activation='relu')(inputs)
 
-        x = Flatten()(x)
+        x = Conv1D(100, 10, activation='relu')(x)
+        x = Conv1D(100, 10, activation='relu')(x)
+
+        x = MaxPooling1D(3)(x)
+
+        x = Conv1D(160, 10, activation='relu')(x)
+        x = Conv1D(160, 10, activation='relu')(x)
+
+        x = GlobalAveragePooling1D()(x)
+        x = Dropout(0.5)(x)
+        
         output = Dense(self.output_size)(x)
 
         self.model = Model(inputs=inputs, outputs=output)
+
+    # def build_model(self):
+    #     inputs = Input(shape=self.input_shape)
+
+    #     x = Dense(64, activation='relu')(inputs)
+    #     x = Dense(64, activation='relu')(inputs)
+
+    #     x = Flatten()(x)
+    #     output = Dense(self.output_size)(x)
+
+    #     self.model = Model(inputs=inputs, outputs=output)
