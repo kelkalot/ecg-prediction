@@ -1,6 +1,10 @@
 import csv
 import numpy as np
 
+import keras.backend as K
+from model import ECGModel
+from keras.optimizers import Nadam
+
 DATA_LABELS = {
     'TestID': 0,
     'VentricularRate': 1,
@@ -18,6 +22,11 @@ DATA_LABELS = {
     'POffset': 13,
     'TOffset': 14
 }
+
+EPOCHS = 1000
+BATCH_SIZE = 8
+
+
 
 def read_csv(csv_file, delimiter=',', skip_header=True, as_type='np_array'):
 
@@ -37,12 +46,7 @@ def read_csv(csv_file, delimiter=',', skip_header=True, as_type='np_array'):
 
     return data
 
-def z_normalize(data):
-    (np.array(data) - np.mean(data)) / np.std(data)
-
-def prepare_data(data, label='QOnset'):
-
-    index = DATA_LABELS[label]
+def prepare_data(data, labels=['QOnset']):
 
     x_data = []
     y_data = []
@@ -50,7 +54,7 @@ def prepare_data(data, label='QOnset'):
     for row in data:
         try:
             median_data = read_csv(f'./medians/{ row[0] }.asc', ' ')
-            y_data.append(row[index])
+            y_data.append([DATA_LABELS[label] for label in labels])
             x_data.append(median_data)
         except FileNotFoundError:
             pass
@@ -64,54 +68,40 @@ def split_data(data, ratio=.3):
     split_index = int(len(data) - (len(data) * ratio))
     return data[:split_index], data[split_index:]
 
-def build_model(input_shape=(600, 8)):
-    model = Sequential()
-    model.add(Convolution1D(input_shape = input_shape,
-                            nb_filter=16,
-                            filter_length=4,
-                            border_mode='same'))
-    model.add(BatchNormalization())
-    model.add(LeakyReLU())
-    model.add(Dropout(0.5))
-    model.add(Convolution1D(nb_filter=8,
-                            filter_length=4,
-                            border_mode='same'))
-    model.add(BatchNormalization())
-    model.add(LeakyReLU())
-    model.add(Dropout(0.5))
-    model.add(Flatten())
-    model.add(Dense(64))
-    model.add(BatchNormalization())
-    model.add(LeakyReLU())
-    model.add(Dense(1))
-
-    return model
-
 if __name__ == '__main__':
 
-    data = read_csv('./ground_truth.csv')
+    data = read_csv('./ground_truth.csv', ';')
 
-    x_data, y_data = prepare_data(data)
+    prediction_labels = [
+        'QRSCount',
+        'QOnset',
+        'QOffset',
+        'POnset',
+        'POffset',
+        'TOffset'
+    ]
+
+    x_data, y_data = prepare_data(data, prediction_labels)
 
     x_train, x_test = split_data(x_data)
     y_train, y_test = split_data(y_data)
 
-    model = build_model()
-    opt = Nadam(lr=0.002)
+    model = ECGModel(output_size=len(prediction_labels))
 
-    model.compile(optimizer=opt, 
+    optimizer = Nadam(lr=0.002)
+    
+    model.compile(optimizer=optimizer, 
               loss='mean_squared_error',
               metrics=['accuracy'])
 
     history = model.fit(x_train, y_train, 
-          nb_epoch = 100, 
-          batch_size = 128, 
-          verbose=1, 
-          validation_data=(y_test, y_test),
+          epochs = EPOCHS, 
+          batch_size = BATCH_SIZE, 
+          verbose = 1, 
+          validation_data = (x_test, y_test),
           shuffle=True)
 
-    read_csv('./ground_truth.csv')
-    read_csv('./medians/101.asc', ' ')
+    model.save('model.h5')
 
 
 
