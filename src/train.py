@@ -17,11 +17,15 @@ DATA_LABELS = {
 }
 
 PREDICTION_LABELS = [
-    'QRSCount', 'QOnset', 'QOffset',
-    'POnset', 'POffset', 'TOffset'
+    # 'QRSCount', 
+    # 'QOnset',
+    # 'QOffset',
+    # 'POnset',
+    # 'POffset',
+    'TOffset'
 ]
 
-EPOCHS = 1
+EPOCHS = 6
 BATCH_SIZE = 8
 SEED = 2
 
@@ -29,7 +33,7 @@ GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv
 MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'
 RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
 
-LOSS_FUNCTION = 'mean_squared_error'
+LOSS_FUNCTION = 'mse'
 MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
 PLOT_FILE = 'loss_plot.png'
 
@@ -86,10 +90,8 @@ if __name__ == '__main__':
     y_train, y_test = split_data(y_data)
 
     model = ECGModel(output_size=len(PREDICTION_LABELS))
-
-    optimizer = Nadam(lr=0.002)
     
-    model.compile(optimizer=optimizer, loss=LOSS_FUNCTION)
+    model.compile(optimizer='nadam', loss=LOSS_FUNCTION)
 
     history = model.fit(x_train, y_train, 
           epochs=EPOCHS, 
