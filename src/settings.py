@@ -18,7 +18,7 @@ BATCH_SIZE = 16
 SEED = 2
 K_FOLDS = 3
 
-X_TRANSPOSE = False
+X_TRANSPOSE = True
 
 GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
 MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'

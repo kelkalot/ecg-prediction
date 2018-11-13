@@ -1,6 +1,6 @@
 from keras.optimizers import Nadam
 
-from model import ECGModel
+from model import ECGModel, ECGBetterModel
 
 from utils import plot_loss, read_csv
 from utils import split_data, prepare_data, k_fold
@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     for x_train, x_test, y_train, y_test in k_fold(x_data, y_data, K_FOLDS):
     
-        model = ECGModel(
+        model = ECGBetterModel(
             input_shape=x_data[0].shape,
             output_size=len(PREDICTION_LABELS))
 

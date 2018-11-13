@@ -47,3 +47,29 @@ class ECGModel(BaseModel):
         print(model.summary())
 
         self.model = model
+
+class ECGBetterModel(BaseModel):
+
+    def __init__(self, *args, **kwargs):
+        super(ECGBetterModel, self).__init__(*args, **kwargs)
+
+    def build_model(self):
+        inputs = Input(shape=self.input_shape)
+
+        x = Conv1D(1200, 2, activation='relu')(inputs)
+        x = Conv1D(600, 2, activation='relu')(x)
+
+        x = MaxPooling1D(2)(x)
+
+        x = Conv1D(200, 2, activation='relu')(x)
+        x = Conv1D(200, 2, activation='relu')(x)
+
+        x = GlobalAveragePooling1D()(x)
+
+        output = Dense(self.output_size)(x)
+
+        model = Model(inputs=inputs, outputs=output)
+
+        print(model.summary())
+
+        self.model = model
