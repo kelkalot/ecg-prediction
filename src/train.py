@@ -9,29 +9,10 @@ import numpy as np
 import tensorflow as tf
 import keras.backend as K
 
-PREDICTION_LABELS = [
-    'QOnset',
-    'QOffset',
-    'POnset',
-    'POffset',
-    'TOffset'
-]
-
-EPOCHS = 100
-BATCH_SIZE = 16
-SEED = 2
-
-X_TRANSPOSE = False
-
-GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
-MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'
-RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
-MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
-
-LOSS_FUNCTION = 'mse'
-OPTIMIZER = Nadam(lr=0.001)
-
-PLOT_FILE = 'loss_plot.png'
+from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
+from settings import X_TRANSPOSE, BATCH_SIZE, SEED
+from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, RHYTHM_PATH
+from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER
 
 tf.set_random_seed(SEED)
 np.random.seed(SEED)
@@ -49,9 +30,6 @@ if __name__ == '__main__':
         prediction_labels=PREDICTION_LABELS,
         training_path=MEDIANS_PATH, 
         x_shape=X_TRANSPOSE)
-
-    # x_train, x_test = split_data(x_data)
-    # y_train, y_test = split_data(y_data)
 
     for x_train, x_test, y_train, y_test in k_fold(x_data, y_data):
     
