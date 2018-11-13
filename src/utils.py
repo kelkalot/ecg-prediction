@@ -2,6 +2,7 @@
 import csv
 import numpy as np
 import tensorflow as tf
+
 try:
     import matplotlib.pyplot as plt
 except:
@@ -13,24 +14,6 @@ DATA_LABELS = {
     'QRSCount': 9, 'QOnset': 10, 'QOffset': 11, 'POnset': 12, 'POffset': 13,
     'TOffset': 14
 }
-
-def plot_loss(history, file_name):
-
-    if plt is None:
-        return
-    
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-
-    plt.title('model loss')
-
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    
-    plt.legend(['training', 'validation'], loc='upper left')
-
-    plt.savefig(file_name)
-    plt.gcf().clear()
 
 def read_csv(csv_file, delimiter=';', shape=None, skip_header=True):
 
@@ -57,11 +40,12 @@ def prepare_data(data, prediction_labels, training_path, x_shape=None):
     x_data = []
     y_data = []
 
+    prediction_indicies = [ DATA_LABELS[label] for label in prediction_labels ]
+
     for row in data:
         try:
             median_data = read_csv(f'{ training_path }/{ row[0] }.asc', ' ', x_shape, False)
-            indicies = [DATA_LABELS[label] for label in prediction_labels]
-            y_data.append([row[index] for index in indicies])
+            y_data.append([ row[index] for index in prediction_indicies ])
             x_data.append(median_data)
         except FileNotFoundError:
             pass
@@ -74,3 +58,21 @@ def prepare_data(data, prediction_labels, training_path, x_shape=None):
 def split_data(data, ratio=.3):
     split_index = int(len(data) - (len(data) * ratio))
     return data[:split_index], data[split_index:]
+
+def plot_loss(history, file_name):
+
+    if plt is None:
+        return
+    
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+
+    plt.title('model loss')
+
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    
+    plt.legend(['training', 'validation'], loc='upper left')
+
+    plt.savefig(file_name)
+    plt.gcf().clear()

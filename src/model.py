@@ -5,6 +5,24 @@ from keras import backend as K
 from keras.models import Model
 from keras.engine.topology import Layer
 
+# class ECGModel():
+
+#     def __init__(self, input_shape, output_size):
+#         self.input_shape = input_shape
+#         self.output_size = output_size
+
+#         self.build_model()
+
+#     def fit(self, x_train, y_train, **kwargs):
+#         return self.model.fit(x_train, y_train, **kwargs)
+
+#     def compile(self, **kwargs):
+#         self.model.compile(**kwargs)
+
+#     def save(self, path):
+#         self.model.save(path)
+
+
 class ECGModel():
 
     def __init__(self, input_shape, output_size):
