@@ -15,7 +15,7 @@ DATA_LABELS = {
     'TOffset': 14
 }
 
-def read_csv(csv_file, delimiter=';', shape=None, skip_header=True):
+def read_csv(csv_file, delimiter=';', transpose=False, skip_header=True):
 
     data = []
 
@@ -30,8 +30,8 @@ def read_csv(csv_file, delimiter=';', shape=None, skip_header=True):
 
     data = np.array(data)
 
-    if shape is not None and shape != data.shape:
-        data = np.reshape(data, shape)
+    if transpose:
+        data = np.transpose(data)
 
     return data
 
@@ -58,6 +58,41 @@ def prepare_data(data, prediction_labels, training_path, x_shape=None):
 def split_data(data, ratio=.3):
     split_index = int(len(data) - (len(data) * ratio))
     return data[:split_index], data[split_index:]
+
+def k_fold(x_data, y_data, k=3):
+
+    assert len(x_data) == len(y_data)
+    
+    x_split_length = len(x_data) // k
+    y_split_length = len(y_data) // k
+
+    x_folds = []
+    y_folds = []
+
+    for k_index in range(k - 1):
+        x_folds += [ x_data[ k_index * x_split_length : (k_index + 1) * x_split_length ] ]
+        y_folds += [ y_data[ k_index * y_split_length : (k_index + 1) * y_split_length ] ]
+
+    x_folds += [ x_data[ (k - 1) * x_split_length : len(x_data) ] ] 
+    y_folds += [ y_data[ (k - 1) * y_split_length : len(y_data) ] ]
+
+    for fold_index in range(k):
+        
+        x_train = []
+        y_train = []
+
+        for train_index in range(k):
+            if train_index != fold_index:
+                x_train.extend(x_folds[train_index])
+                y_train.extend(y_folds[train_index])
+
+        x_train = np.array(x_train)
+        y_train = np.array(y_train)
+
+        x_test = x_folds[fold_index]
+        y_test = y_folds[fold_index]
+    
+        yield x_train, x_test, y_train, y_test
 
 def plot_loss(history, file_name):
 
