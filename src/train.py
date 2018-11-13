@@ -17,16 +17,15 @@ DATA_LABELS = {
 }
 
 PREDICTION_LABELS = [
-    # 'QRSCount', 
-    # 'QOnset',
-    # 'QOffset',
-    # 'POnset',
-    # 'POffset',
+    'QOnset',
+    'QOffset',
+    'POnset',
+    'POffset',
     'TOffset'
 ]
 
-EPOCHS = 6
-BATCH_SIZE = 8
+EPOCHS = 10
+BATCH_SIZE = 16
 SEED = 2
 
 GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
@@ -37,14 +36,14 @@ LOSS_FUNCTION = 'mse'
 MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
 PLOT_FILE = 'loss_plot.png'
 
-tf.set_random_seed(SEED)
-np.random.seed(SEED)
+# tf.set_random_seed(SEED)
+# np.random.seed(SEED)
 
 def split_data(data, ratio=.3):
     split_index = int(len(data) - (len(data) * ratio))
     return data[:split_index], data[split_index:]
 
-def read_csv(csv_file, delimiter=',', skip_header=True, as_type='np_array'):
+def read_csv(csv_file, delimiter=',', skip_header=True, reshape=False, as_type='np_array'):
 
     data = []
 
@@ -60,17 +59,21 @@ def read_csv(csv_file, delimiter=',', skip_header=True, as_type='np_array'):
     if as_type == 'np_array':
         data = np.array(data)
 
+    if reshape == True:
+        data = np.reshape(data, (8, 599))
+
     return data
 
-def prepare_data(data, labels=['QOnset']):
+def prepare_data(data, labels):
 
     x_data = []
     y_data = []
 
     for row in data:
         try:
-            median_data = read_csv(f'{ MEDIANS_PATH }/{ row[0] }.asc', ' ')
-            y_data.append([DATA_LABELS[label] for label in labels])
+            median_data = read_csv(f'{ MEDIANS_PATH }/{ row[0] }.asc', ' ', True, True)
+            indicies = [DATA_LABELS[label] for label in labels]
+            y_data.append([row[index] for index in indicies])
             x_data.append(median_data)
         except FileNotFoundError:
             pass
@@ -90,8 +93,10 @@ if __name__ == '__main__':
     y_train, y_test = split_data(y_data)
 
     model = ECGModel(output_size=len(PREDICTION_LABELS))
-    
-    model.compile(optimizer='nadam', loss=LOSS_FUNCTION)
+
+    optimizer = Nadam(lr=0.0001)
+
+    model.compile(optimizer=optimizer, loss=LOSS_FUNCTION)
 
     history = model.fit(x_train, y_train, 
           epochs=EPOCHS, 
