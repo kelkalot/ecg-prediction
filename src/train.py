@@ -29,6 +29,8 @@ RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
 MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
 
 LOSS_FUNCTION = 'mse'
+OPTIMIZER = Nadam(lr=0.001)
+
 PLOT_FILE = 'loss_plot.png'
 
 tf.set_random_seed(SEED)
@@ -55,9 +57,9 @@ if __name__ == '__main__':
         input_shape=x_data[0].shape,
         output_size=len(PREDICTION_LABELS))
 
-    optimizer = Nadam(lr=0.001)
-
-    model.compile(optimizer=optimizer, loss=LOSS_FUNCTION)
+    model.compile(
+        optimizer=OPTIMIZER,
+        loss=LOSS_FUNCTION)
 
     history = model.fit(x_train, y_train, 
           epochs=EPOCHS,
