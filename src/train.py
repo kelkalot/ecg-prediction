@@ -3,18 +3,11 @@ import keras.backend as K
 from keras.optimizers import Nadam
 
 from model import ECGModel
-from utils import plot_loss
+from utils import plot_loss, read_csv, split_data, prepare_data
 
 import csv
 import numpy as np
 import tensorflow as tf
-
-DATA_LABELS = {
-    'TestID': 0, 'VentricularRate': 1, 'P_RInterval': 2, 'QRSDuration': 3,
-    'Q_TInterval': 4, 'QTCCalculation': 5, 'PAxis': 6, 'RAxis': 7, 'TAxis': 8,
-    'QRSCount': 9, 'QOnset': 10, 'QOffset': 11, 'POnset': 12, 'POffset': 13,
-    'TOffset': 14
-}
 
 PREDICTION_LABELS = [
     'QOnset',
@@ -24,75 +17,33 @@ PREDICTION_LABELS = [
     'TOffset'
 ]
 
-EPOCHS = 10
+EPOCHS = 100
 BATCH_SIZE = 16
 SEED = 2
+
+X_SHAPE = (600, 8)
 
 GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
 MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'
 RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
+MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
 
 LOSS_FUNCTION = 'mse'
-MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
 PLOT_FILE = 'loss_plot.png'
 
-# tf.set_random_seed(SEED)
-# np.random.seed(SEED)
-
-def split_data(data, ratio=.3):
-    split_index = int(len(data) - (len(data) * ratio))
-    return data[:split_index], data[split_index:]
-
-def read_csv(csv_file, delimiter=',', skip_header=True, reshape=False, as_type='np_array'):
-
-    data = []
-
-    with open(csv_file, 'r') as f:
-        csv_data = csv.reader(f, delimiter=delimiter)
-        
-        if skip_header:
-            next(csv_data)
-        
-        for row in csv_data:
-            data.append(row)
-
-    if as_type == 'np_array':
-        data = np.array(data)
-
-    if reshape == True:
-        data = np.reshape(data, (8, 599))
-
-    return data
-
-def prepare_data(data, labels):
-
-    x_data = []
-    y_data = []
-
-    for row in data:
-        try:
-            median_data = read_csv(f'{ MEDIANS_PATH }/{ row[0] }.asc', ' ', True, True)
-            indicies = [DATA_LABELS[label] for label in labels]
-            y_data.append([row[index] for index in indicies])
-            x_data.append(median_data)
-        except FileNotFoundError:
-            pass
-    
-    x_data = np.array(x_data)
-    y_data = np.array(y_data)
-
-    return x_data, y_data
+tf.set_random_seed(SEED)
+np.random.seed(SEED)
 
 if __name__ == '__main__':
 
     data = read_csv(GROUND_TRUTH_PATH, ';')
 
-    x_data, y_data = prepare_data(data, PREDICTION_LABELS)
+    x_data, y_data = prepare_data(data, PREDICTION_LABELS, MEDIANS_PATH, X_SHAPE)
 
     x_train, x_test = split_data(x_data)
     y_train, y_test = split_data(y_data)
 
-    model = ECGModel(output_size=len(PREDICTION_LABELS))
+    model = ECGModel(input_shape=x_data[0].shape, output_size=len(PREDICTION_LABELS))
 
     optimizer = Nadam(lr=0.0001)
 
@@ -100,7 +51,7 @@ if __name__ == '__main__':
 
     history = model.fit(x_train, y_train, 
           epochs=EPOCHS, 
-          batch_size= BATCH_SIZE, 
+          batch_size= BATCH_SIZE,
           verbose=1, 
           validation_data=(x_test, y_test),
           shuffle=True)

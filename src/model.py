@@ -1,11 +1,13 @@
-from keras.layers import Input, Dense, Flatten, Dropout
+from keras.layers import Input, Dense, Flatten, Dropout, Lambda
 from keras.layers import Conv1D, MaxPooling1D, GlobalAveragePooling1D
+from keras import backend as K
 
 from keras.models import Model
+from keras.engine.topology import Layer
 
 class ECGModel():
 
-    def __init__(self, input_shape=(8, 599), output_size=3):
+    def __init__(self, input_shape, output_size):
         self.input_shape = input_shape
         self.output_size = output_size
 
@@ -23,18 +25,16 @@ class ECGModel():
     def build_model(self):
         inputs = Input(shape=self.input_shape)
 
-        x = Conv1D(1200, 2, activation='relu')(inputs)
-        x = Conv1D(600, 2, activation='relu')(x)
+        x = Conv1D(100, 10, activation='relu')(inputs)
+        x = Conv1D(100, 10, activation='relu')(x)
 
-        x = MaxPooling1D(2)(x)
+        x = MaxPooling1D(3)(x)
 
-        x = Conv1D(200, 2, activation='relu')(x)
-        x = Conv1D(200, 2, activation='relu')(x)
-       # x = Conv1D(200, 3, activation='relu')(x)
+        x = Conv1D(160, 10, activation='relu')(x)
+        x = Conv1D(160, 10, activation='relu')(x)
 
         x = GlobalAveragePooling1D()(x)
-#        x = Dropout(0.5)(x)
-        
+        x = Dropout(0.5)(x)
         output = Dense(self.output_size)(x)
 
         model = Model(inputs=inputs, outputs=output)
