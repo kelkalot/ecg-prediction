@@ -23,15 +23,12 @@ x_data, y_data = prepare_data(
     training_path=MEDIANS_PATH, 
     x_shape=X_TRANSPOSE)
 
-fold_index = 0
 
-for x_train, x_test, y_train, y_test in k_fold(x_data, y_data, K_FOLDS):
+for fold_index, (x_train, x_test, y_train, y_test) in enumerate(k_fold(x_data, y_data, K_FOLDS)):
     
     model = load_model(f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5')
     
     for row_index, row in enumerate(x_test):
-        data_row = []
-        data_row.append(row)
-        print(np.round(model.predict([data_row]).flatten()), y_test[row_index])
-
-    fold_index += 1
+        prediction = np.round(model.predict(row.reshape((1, *row.shape))).flatten())
+        
+        print(prediction, y_test[row_index])

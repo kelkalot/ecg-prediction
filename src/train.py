@@ -1,6 +1,6 @@
 from keras.optimizers import Nadam
 
-from model import ECGModel, ECGBetterModel
+from model import ECGModel, ECGBetterModel, ECGModelBest
 
 from utils import plot_loss, read_csv
 from utils import split_data, prepare_data, k_fold
@@ -32,9 +32,8 @@ if __name__ == '__main__':
         training_path=MEDIANS_PATH, 
         x_shape=X_TRANSPOSE)
 
-    fold_index = 0
 
-    for x_train, x_test, y_train, y_test in k_fold(x_data, y_data, K_FOLDS):
+    for fold_index, (x_train, x_test, y_train, y_test) in enumerate(k_fold(x_data, y_data, K_FOLDS)):
     
         model = ECGBetterModel(
             input_shape=x_data[0].shape,
@@ -54,8 +53,6 @@ if __name__ == '__main__':
         plot_loss(history, PLOT_FILE)
 
         model.save(f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5')
-
-        fold_index += 1
 
 
 

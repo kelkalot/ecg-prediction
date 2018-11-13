@@ -12,6 +12,9 @@ class BaseModel():
         self.output_size = output_size
 
         self.build_model()
+        
+        print(self.model.summary())
+
 
     def fit(self, x_train, y_train, **kwargs):
         return self.model.fit(x_train, y_train, **kwargs)
@@ -30,21 +33,19 @@ class ECGModel(BaseModel):
     def build_model(self):
         inputs = Input(shape=self.input_shape)
 
-        x = Conv1D(100, 10, activation='relu')(inputs)
-        x = Conv1D(100, 10, activation='relu')(x)
+        x = Conv1D(100, 2, activation='relu')(inputs)
+        x = Conv1D(100, 2, activation='relu')(x)
 
         x = MaxPooling1D(3)(x)
 
-        x = Conv1D(160, 10, activation='relu')(x)
-        x = Conv1D(160, 10, activation='relu')(x)
+        x = Conv1D(160, 2, activation='relu')(x)
+        x = Conv1D(160, 2, activation='relu')(x)
 
         x = GlobalAveragePooling1D()(x)
         x = Dropout(0.5)(x)
         output = Dense(self.output_size)(x)
 
         model = Model(inputs=inputs, outputs=output)
-
-        print(model.summary())
 
         self.model = model
 
@@ -70,6 +71,28 @@ class ECGBetterModel(BaseModel):
 
         model = Model(inputs=inputs, outputs=output)
 
-        print(model.summary())
+        self.model = model
 
+class ECGModelBest(BaseModel):
+
+    def __init__(self, *args, **kwargs):
+        super(ECGModelBest, self).__init__(*args, **kwargs)
+
+    def build_model(self):
+        inputs = Input(shape=self.input_shape)
+
+        x = Conv1D(32, 2, activation='relu')(inputs)
+        x = Conv1D(32, 2, activation='relu')(x)
+
+        x = MaxPooling1D(2)(x)
+
+        x = Conv1D(64, 2, activation='relu')(x)
+        x = Conv1D(64, 2, activation='relu')(x)
+
+        x = GlobalAveragePooling1D()(x)
+        x = Dropout(0.5)(x)
+        output = Dense(self.output_size)(x)
+
+        model = Model(inputs=inputs, outputs=output)
+        
         self.model = model

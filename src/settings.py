@@ -1,3 +1,6 @@
+from keras.optimizers import Nadam
+
+
 DATA_LABELS = {
     'TestID': 0, 'VentricularRate': 1, 'P_RInterval': 2, 'QRSDuration': 3,
     'Q_TInterval': 4, 'QTCCalculation': 5, 'PAxis': 6, 'RAxis': 7, 'TAxis': 8,
@@ -13,20 +16,20 @@ PREDICTION_LABELS = [
     'TOffset'
 ]
 
-EPOCHS = 1
+EPOCHS = 1000
 BATCH_SIZE = 16
 SEED = 2
 K_FOLDS = 3
 
 X_TRANSPOSE = True
 
-GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
-MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'
-RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
+GROUND_TRUTH_PATH = '/home/steven/github/ecg-prediction/data/ground_truth.csv'
+MEDIANS_PATH = '/home/steven/github/ecg-prediction/data/medians'
+RHYTHM_PATH = '/home/steven/github/ecg-prediction/data/rhythm'
 
-MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
+MODEL_FILE = '/home/steven/github/ecg-prediction/model.h5'
 
 LOSS_FUNCTION = 'mse'
-OPTIMIZER = 'nadam'
+OPTIMIZER = Nadam(lr=0.001)
 
 PLOT_FILE = 'loss_plot.png'
