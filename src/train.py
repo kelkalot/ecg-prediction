@@ -5,6 +5,13 @@ from model import ECGModel, ECGBetterModel, ECGModelBest
 from utils import plot_loss, read_csv
 from utils import split_data, prepare_data, k_fold
 
+try:
+    from sacred import Experiment
+    from sacred.utils import apply_backspaces_and_linefeeds
+    from sacred.observers import FileStorageObserver
+except:
+    Experiment = None    
+
 import numpy as np
 import tensorflow as tf
 import keras.backend as K
@@ -14,12 +21,12 @@ from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
 from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS
 from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, RHYTHM_PATH
 from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER
+from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT
 
 tf.set_random_seed(SEED)
 np.random.seed(SEED)
 
-if __name__ == '__main__':
-
+def train():
     data = read_csv(
         csv_file=GROUND_TRUTH_PATH,
         delimiter=';',
@@ -31,7 +38,6 @@ if __name__ == '__main__':
         prediction_labels=PREDICTION_LABELS,
         training_path=MEDIANS_PATH, 
         x_shape=X_TRANSPOSE)
-
 
     for fold_index, (x_train, x_test, y_train, y_test) in enumerate(k_fold(x_data, y_data, K_FOLDS)):
     
@@ -54,6 +60,20 @@ if __name__ == '__main__':
 
         model.save(f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5')
 
+if __name__ == '__main__':
+
+    if Experiment is not None:
+
+        experiment_path = f'{EXPERIMENT_ROOT}/{ EXPERIMENT_NAME }'
+
+        experiment = Experiment(EXPERIMENT_NAME)
+        experiment.captured_out_filter = apply_backspaces_and_linefeeds
+        experiment.observers.append(FileStorageObserver.create(experiment_path))
+        
+        experiment.automain( train )
+
+    else:
+        train()
 
 
     
