@@ -8,9 +8,10 @@ from utils import split_data, prepare_data, k_fold
 import numpy as np
 import tensorflow as tf
 import keras.backend as K
+import os
 
 from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
-from settings import X_TRANSPOSE, BATCH_SIZE, SEED
+from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS
 from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, RHYTHM_PATH
 from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER
 
@@ -31,7 +32,9 @@ if __name__ == '__main__':
         training_path=MEDIANS_PATH, 
         x_shape=X_TRANSPOSE)
 
-    for x_train, x_test, y_train, y_test in k_fold(x_data, y_data):
+    fold_index = 0
+
+    for x_train, x_test, y_train, y_test in k_fold(x_data, y_data, K_FOLDS):
     
         model = ECGModel(
             input_shape=x_data[0].shape,
@@ -50,7 +53,9 @@ if __name__ == '__main__':
 
         plot_loss(history, PLOT_FILE)
 
-        model.save(MODEL_FILE)
+        model.save(f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5')
+
+        fold_index += 1
 
 
 

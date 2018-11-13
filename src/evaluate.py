@@ -4,9 +4,10 @@ from utils import k_fold, prepare_data, read_csv
 
 import keras.backend as K
 import numpy as np
+import os
 
 from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
-from settings import X_TRANSPOSE, BATCH_SIZE, SEED
+from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS
 from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, RHYTHM_PATH
 from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER
 
@@ -22,11 +23,15 @@ x_data, y_data = prepare_data(
     training_path=MEDIANS_PATH, 
     x_shape=X_TRANSPOSE)
 
-for x_train, x_test, y_train, y_test in k_fold(x_data, y_data):
+fold_index = 0
+
+for x_train, x_test, y_train, y_test in k_fold(x_data, y_data, K_FOLDS):
     
-    model = load_model(MODEL_FILE)
+    model = load_model(f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5')
     
     for row_index, row in enumerate(x_test):
         data_row = []
         data_row.append(row)
         print(np.round(model.predict([data_row]).flatten()), y_test[row_index])
+
+    fold_index += 1
