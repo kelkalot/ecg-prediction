@@ -36,7 +36,7 @@ EXPERIMENT_ROOT = '/home/steven/Dropbox/Github/ecg-prediction/experiments'
 
 MODEL_FILE = '/home/steven/github/ecg-prediction/model.h5'
 
-LOSS_FUNCTION = 'mse'
+LOSS_FUNCTION = 'mean_squared_logarithmic_error'
 OPTIMIZER = Nadam(lr=0.001)
 
 PLOT_FILE = 'loss_plot.png'
