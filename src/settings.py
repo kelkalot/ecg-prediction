@@ -27,9 +27,13 @@ GROUND_TRUTH_PATH = '/home/steven/github/ecg-prediction/data/ground_truth.csv'
 MEDIANS_PATH = '/home/steven/github/ecg-prediction/data/medians'
 RHYTHM_PATH = '/home/steven/github/ecg-prediction/data/rhythm'
 
+EXPERIMENT_NAME = ''
+EXPERIMENT_ROOT = ''
+
 MODEL_FILE = '/home/steven/github/ecg-prediction/model.h5'
 
 LOSS_FUNCTION = 'mse'
 OPTIMIZER = Nadam(lr=0.001)
 
 PLOT_FILE = 'loss_plot.png'
+

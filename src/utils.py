@@ -28,7 +28,7 @@ def read_csv(csv_file, delimiter=';', transpose=False, skip_header=True):
         for row in csv_data:
             data.append(row)
 
-    data = np.array(data)
+    data = np.array(data, dtype=np.int)
 
     if transpose:
         data = np.transpose(data)
