@@ -1,15 +1,12 @@
 from keras.models import load_model
-from train import read_csv
-from utils import k_fold, prepare_data, read_csv
+from utils import k_fold, prepare_image_data, read_csv
 
 import keras.backend as K
 import numpy as np
 import os
 
-from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
-from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS
-from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, RHYTHM_PATH
-from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER
+from settings import PREDICTION_LABELS, IMAGE_SHAPE, K_FOLDS
+from settings import GROUND_TRUTH_PATH, MEDIANS_IMAGE_PATH, MODEL_FILE
 
 GROUND_TRUTH = read_csv(
     csv_file=GROUND_TRUTH_PATH,
@@ -17,11 +14,11 @@ GROUND_TRUTH = read_csv(
     transpose=False,
     skip_header=True)
 
-x_data, y_data = prepare_data(
+x_data, y_data = prepare_image_data(
     data=GROUND_TRUTH,
     prediction_labels=PREDICTION_LABELS,
-    training_path=MEDIANS_PATH, 
-    x_shape=X_TRANSPOSE)
+    training_path=MEDIANS_IMAGE_PATH, 
+    x_shape=IMAGE_SHAPE)
 
 
 for fold_index, (x_train, x_test, y_train, y_test) in enumerate(k_fold(x_data, y_data, K_FOLDS)):

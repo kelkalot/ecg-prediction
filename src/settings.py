@@ -17,18 +17,20 @@ PREDICTION_LABELS = [
 ]
 
 EPOCHS = 1000
-BATCH_SIZE = 16
+BATCH_SIZE = 1
 SEED = 2
 K_FOLDS = 3
 
 X_TRANSPOSE = True
+IMAGE_SHAPE = (8, 600, 3)
 
-GROUND_TRUTH_PATH = '/home/steven/github/ecg-prediction/data/ground_truth.csv'
-MEDIANS_PATH = '/home/steven/github/ecg-prediction/data/medians'
-RHYTHM_PATH = '/home/steven/github/ecg-prediction/data/rhythm'
+GROUND_TRUTH_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/ground_truth.csv'
+MEDIANS_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians'
+RHYTHM_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/rhythm'
+MEDIANS_IMAGE_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_images'
 
-EXPERIMENT_NAME = ''
-EXPERIMENT_ROOT = ''
+EXPERIMENT_NAME = 'ECG_CNN_MODEL'
+EXPERIMENT_ROOT = '/home/steven/Dropbox/Github/ecg-prediction/experiments'
 
 MODEL_FILE = '/home/steven/github/ecg-prediction/model.h5'
 

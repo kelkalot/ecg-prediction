@@ -3,6 +3,10 @@ import csv
 import numpy as np
 import tensorflow as tf
 
+from keras.preprocessing import image as kimage
+
+import cv2
+
 try:
     import matplotlib.pyplot as plt
 except:
@@ -15,7 +19,7 @@ DATA_LABELS = {
     'TOffset': 14
 }
 
-def read_csv(csv_file, delimiter=';', transpose=False, skip_header=True):
+def read_csv(csv_file, delimiter=';', transpose=False, skip_header=True, dtype=None):
 
     data = []
 
@@ -28,14 +32,29 @@ def read_csv(csv_file, delimiter=';', transpose=False, skip_header=True):
         for row in csv_data:
             data.append(row)
 
-    data = np.array(data, dtype=np.int)
+    data = np.array(data, dtype=dtype)
 
     if transpose:
         data = np.transpose(data)
 
     return data
 
-def prepare_data(data, prediction_labels, training_path, x_shape=None):
+def read_image(image_file, image_shape):
+
+    image = cv2.imread(image_file)
+
+    if image is None:
+        raise FileNotFoundError()
+
+    image = cv2.resize(image, (image_shape[1], image_shape[0]))
+
+    image_tensor = kimage.img_to_array(image)
+    image_tensor /= 255. 
+
+    return image_tensor
+
+
+def prepare_csv_data(data, prediction_labels, training_path, x_shape=None):
 
     x_data = []
     y_data = []
@@ -54,6 +73,27 @@ def prepare_data(data, prediction_labels, training_path, x_shape=None):
     y_data = np.array(y_data)
 
     return x_data, y_data
+    
+def prepare_image_data(data, prediction_labels, training_path, x_shape=None):
+
+    x_data = []
+    y_data = []
+
+    prediction_indicies = [ DATA_LABELS[label] for label in prediction_labels ]
+
+    for row in data:
+        try:
+            median_data = read_image(f'{ training_path }/{ row[0] }.png', x_shape)
+            y_data.append([ row[index] for index in prediction_indicies ])
+            x_data.append(median_data)
+        except FileNotFoundError:
+            pass
+    
+    x_data = np.array(x_data)
+    y_data = np.array(y_data)
+
+    return x_data, y_data
+
 
 def split_data(data, ratio=.3):
     split_index = int(len(data) - (len(data) * ratio))

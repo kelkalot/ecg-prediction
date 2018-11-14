@@ -3,7 +3,7 @@ from keras.optimizers import Nadam
 from model import ECGModel, ECGBetterModel, ECGModelBest
 
 from utils import plot_loss, read_csv
-from utils import split_data, prepare_data, k_fold
+from utils import split_data, prepare_csv_data, k_fold
 
 try:
     from sacred import Experiment
@@ -33,7 +33,7 @@ def train():
         transpose=False,
         skip_header=True)
 
-    x_data, y_data = prepare_data(
+    x_data, y_data = prepare_csv_data(
         data=data,
         prediction_labels=PREDICTION_LABELS,
         training_path=MEDIANS_PATH, 
@@ -50,15 +50,19 @@ def train():
             loss=LOSS_FUNCTION)
             
         history = model.fit(x_train, y_train, 
-                epochs=EPOCHS,
-                batch_size= BATCH_SIZE,
-                verbose=1,
-                validation_data=(x_test, y_test),
-                shuffle=True)
+            epochs=EPOCHS,
+            batch_size= BATCH_SIZE,
+            verbose=1,
+            validation_data=(x_test, y_test),
+            shuffle=True)
 
         plot_loss(history, PLOT_FILE)
 
-        model.save(f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5')
+        model_path = f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5'
+        model.save(model_path)
+
+        experiment.add_artifact(PLOT_FILE)
+        experiment.add_artifact(model_path)
 
 if __name__ == '__main__':
 
