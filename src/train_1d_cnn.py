@@ -20,7 +20,7 @@ import os
 from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
 from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS
 from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, RHYTHM_PATH
-from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER
+from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER, METRICS
 from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT
 
 tf.set_random_seed(SEED)
@@ -47,7 +47,8 @@ def train():
 
         model.compile(
             optimizer=OPTIMIZER,
-            loss=LOSS_FUNCTION)
+            loss=LOSS_FUNCTION,
+            metrics=METRICS)
             
         history = model.fit(x_train, y_train, 
             epochs=EPOCHS,

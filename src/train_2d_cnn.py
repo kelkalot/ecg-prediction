@@ -3,8 +3,8 @@ from model import ECGModel2D
 from utils import prepare_image_data, k_fold, read_csv, plot_loss
 
 from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
-from settings import GROUND_TRUTH_PATH, MEDIANS_IMAGE_PATH
-from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS
+from settings import GROUND_TRUTH_PATH, MEDIANS_IMAGE_PATH, METRICS
+from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS, LOSS_FUNCTION
 from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT, MODEL_FILE
 
 import os
@@ -37,9 +37,9 @@ def train():
         model = ECGModel2D(input_shape=INPUT_SHAPE, output_size=len(PREDICTION_LABELS))
 
         model.compile(
-            loss='mse',
+            loss=LOSS_FUNCTION,
             optimizer='nadam',
-            metrics=[ 'mse' ])
+            metrics=METRICS)
 
         history = model.fit(x_train, y_train,
                 batch_size=BATCH_SIZE,

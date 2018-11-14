@@ -24,6 +24,8 @@ K_FOLDS = 3
 X_TRANSPOSE = True
 IMAGE_SHAPE = (8, 600, 3)
 
+METRICS = [ 'mse' ]
+
 GROUND_TRUTH_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/ground_truth.csv'
 MEDIANS_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians'
 RHYTHM_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/rhythm'

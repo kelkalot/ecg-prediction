@@ -37,7 +37,7 @@ def generate_ecg_image(ecg_data, ecg_id, save_path='../data/medians_images'):
 
             # BLUE channel
             if ecg_value <= BASELINE_UPPER_LIMIT and ecg_value >= BASELINE_LOWER_LIMIT:
-                canvas[ y_index, x_index, B_CHANNEL ] =  BLUE_STRENGTH - abs(ecg_value)
+                canvas[ y_index, x_index, B_CHANNEL ] =  abs(BLUE_STRENGTH - abs(ecg_value))
 
     # Create the image
     image = Image.fromarray(canvas, 'RGB')

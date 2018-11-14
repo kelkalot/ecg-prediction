@@ -48,6 +48,9 @@ def read_image(image_file, image_shape):
 
     image = cv2.resize(image, (image_shape[1], image_shape[0]))
 
+    # convert to RGB
+    # image = image[:,:,::-1]
+
     image_tensor = kimage.img_to_array(image)
     image_tensor /= 255. 
 
