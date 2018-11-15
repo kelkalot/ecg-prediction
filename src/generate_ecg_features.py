@@ -22,7 +22,23 @@ def generate_ecg_feature(ecg_data, ecg_id, save_path, ground_truth):
 
     np.savetxt(os.path.join(save_path, f'{ ecg_id }.csv'), feature_vector, fmt='%i', newline=',')
 
+def generate_ecg_vector(ecg_data, ecg_id, save_path, ground_truth):
+
+    feature_vector = [ int(ecg_id) ]
+
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    for row in ecg_data:
+        feature_vector.extend(row)
+
+    feature_vector.extend(ground_truth)
+
+    return feature_vector
+
 if __name__ == '__main__':
+
+    feature_vectors = []
 
     ground_truth = read_csv(
         csv_file=GROUND_TRUTH_PATH,
@@ -42,7 +58,10 @@ if __name__ == '__main__':
             print(f'Generating features: { index + 1 } / { len(os.listdir(MEDIANS_PATH)) }', end='\r')
             truth = truth_dict[os.path.splitext(ecg_file)[0]]
             ecg_data = read_csv(os.path.join(MEDIANS_PATH, ecg_file), delimiter=' ', transpose=True, skip_header=False, dtype=np.int)
-            generate_ecg_feature(ecg_data, os.path.splitext(ecg_file)[0], MEDIANS_FEATURE_PATH, truth)
+            feature_vector = generate_ecg_vector(ecg_data, os.path.splitext(ecg_file)[0], MEDIANS_FEATURE_PATH, truth)
+            feature_vectors.append(feature_vector)
         except:
             pass
+
+    np.savetxt(os.path.join(MEDIANS_FEATURE_PATH, f'all_patients.csv'), feature_vectors, fmt='%i', delimiter=',')
     
