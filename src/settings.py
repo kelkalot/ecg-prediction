@@ -26,15 +26,15 @@ IMAGE_SHAPE = (8, 600, 3)
 
 METRICS = [ 'mse' ]
 
-GROUND_TRUTH_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/ground_truth.csv'
-MEDIANS_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians'
-RHYTHM_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/rhythm'
-MEDIANS_IMAGE_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_images'
+GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
+MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'
+RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
+MEDIANS_IMAGE_PATH = '/Users/stevenah/github/ecg-prediction/data/medians_images'
 
 EXPERIMENT_NAME = 'ECG_CNN_MODEL'
-EXPERIMENT_ROOT = '/home/steven/Dropbox/Github/ecg-prediction/experiments'
+EXPERIMENT_ROOT = '/Users/stevenah/github/ecg-prediction/experiments'
 
-MODEL_FILE = '/home/steven/github/ecg-prediction/model.h5'
+MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
 
 LOSS_FUNCTION = 'mean_squared_logarithmic_error'
 OPTIMIZER = Nadam(lr=0.001)
