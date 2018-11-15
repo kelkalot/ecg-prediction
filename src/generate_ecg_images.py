@@ -5,7 +5,7 @@ import os
 from utils import read_csv
 from PIL import Image
 
-from settings import MEDIANS_PATH, IMAGE_SHAPE
+from settings import MEDIANS_PATH, IMAGE_SHAPE, MEDIANS_IMAGE_PATH
 
 R_CHANNEL = 0
 G_CHANNEL = 1
@@ -15,7 +15,7 @@ BASELINE_UPPER_LIMIT = 50
 BASELINE_LOWER_LIMIT = -20
 BLUE_STRENGTH = 0
 
-def generate_ecg_image(ecg_data, ecg_id, save_path='../data/medians_images'):
+def generate_ecg_image(ecg_data, ecg_id, save_path):
         
     canvas = np.zeros(IMAGE_SHAPE, dtype=np.uint8)
 
@@ -48,5 +48,5 @@ if __name__ == '__main__':
     for index, ecg_file in enumerate(os.listdir(MEDIANS_PATH)):
         print(f'Generating images: { index + 1 } / { len(os.listdir(MEDIANS_PATH)) }', end='\r')
         ecg_data = read_csv(os.path.join(MEDIANS_PATH, ecg_file), delimiter=' ', transpose=True, skip_header=False, dtype=np.int)
-        generate_ecg_image(ecg_data, os.path.splitext(ecg_file)[0])
+        generate_ecg_image(ecg_data, os.path.splitext(ecg_file)[0], MEDIANS_IMAGE_PATH)
     

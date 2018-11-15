@@ -29,7 +29,9 @@ METRICS = [ 'mse' ]
 GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
 MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'
 RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
+
 MEDIANS_IMAGE_PATH = '/Users/stevenah/github/ecg-prediction/data/medians_images'
+MEDIANS_FEATURE_PATH = '/Users/stevenah/github/ecg-prediction/data/medians_features'
 
 EXPERIMENT_NAME = 'ECG_CNN_MODEL'
 EXPERIMENT_ROOT = '/Users/stevenah/github/ecg-prediction/experiments'
