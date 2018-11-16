@@ -9,15 +9,11 @@ DATA_LABELS = {
 }
 
 PREDICTION_LABELS = [
-    'QOnset',
-    'QOffset',
-    'POnset',
-    'POffset',
-    'TOffset'
+    'QOnset'
 ]
 
-EPOCHS = 1000
-BATCH_SIZE = 1
+EPOCHS = 5000
+BATCH_SIZE = 16
 SEED = 2
 K_FOLDS = 3
 
@@ -26,20 +22,21 @@ IMAGE_SHAPE = (8, 600, 3)
 
 METRICS = [ 'mse' ]
 
-GROUND_TRUTH_PATH = '/Users/stevenah/github/ecg-prediction/data/ground_truth.csv'
-MEDIANS_PATH = '/Users/stevenah/github/ecg-prediction/data/medians'
-RHYTHM_PATH = '/Users/stevenah/github/ecg-prediction/data/rhythm'
+GROUND_TRUTH_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/ground_truth.csv'
+MEDIANS_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians'
+RHYTHM_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/rhythm'
 
-MEDIANS_IMAGE_PATH = '/Users/stevenah/github/ecg-prediction/data/medians_images'
-MEDIANS_FEATURE_PATH = '/Users/stevenah/github/ecg-prediction/data/medians_features'
+MEDIANS_IMAGE_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_images'
+MEDIANS_FEATURE_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_features'
+MEDIANS_PLOT_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_plots'
 
 EXPERIMENT_NAME = 'ECG_CNN_MODEL'
-EXPERIMENT_ROOT = '/Users/stevenah/github/ecg-prediction/experiments'
+EXPERIMENT_ROOT = '/home/steven/Dropbox/Github/ecg-prediction/experiments'
 
-MODEL_FILE = '/Users/stevenah/github/ecg-prediction/model.h5'
+MODEL_FILE = '/home/steven/Dropbox/Github/ecg-prediction/model.h5'
 
 LOSS_FUNCTION = 'mean_squared_logarithmic_error'
-OPTIMIZER = Nadam(lr=0.001)
+OPTIMIZER = 'nadam'
 
 PLOT_FILE = 'loss_plot.png'
 

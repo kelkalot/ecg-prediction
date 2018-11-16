@@ -5,7 +5,7 @@ from utils import prepare_image_data, k_fold, read_csv, plot_loss
 from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
 from settings import GROUND_TRUTH_PATH, MEDIANS_IMAGE_PATH, METRICS
 from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS, LOSS_FUNCTION
-from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT, MODEL_FILE
+from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT, MODEL_FILE, IMAGE_SHAPE
 
 import os
 
@@ -15,8 +15,6 @@ try:
     from sacred.observers import FileStorageObserver
 except:
     Experiment = None  
-
-INPUT_SHAPE = (8, 600, 3)
 
 def train():
 
@@ -30,11 +28,11 @@ def train():
         data=data,
         prediction_labels=PREDICTION_LABELS,
         training_path=MEDIANS_IMAGE_PATH, 
-        x_shape=INPUT_SHAPE)
+        x_shape=IMAGE_SHAPE)
 
     for fold_index, (x_train, x_test, y_train, y_test) in enumerate(k_fold(x_data, y_data, K_FOLDS)):
 
-        model = ECGModel2D(input_shape=INPUT_SHAPE, output_size=len(PREDICTION_LABELS))
+        model = ECGModel2D(input_shape=IMAGE_SHAPE, output_size=len(PREDICTION_LABELS))
 
         model.compile(
             loss=LOSS_FUNCTION,
@@ -48,19 +46,14 @@ def train():
                 validation_data=(x_test, y_test),
                 shuffle=True)
         
-        model.save(f'model_{ fold_index }.h5')
-
         plot_loss(history, PLOT_FILE)
 
         model_path = f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5'
         model.save(model_path)
 
-        if Experiment not None:
+        if Experiment is not None:
             experiment.add_artifact(PLOT_FILE)
             experiment.add_artifact(model_path)
-            
-        score = model.evaluate(x_test, y_test, verbose=0)
-
 
 if __name__ == '__main__':
 

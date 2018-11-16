@@ -62,7 +62,7 @@ def train():
         model_path = f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5'
         model.save(model_path)
 
-        if Experiment not None:
+        if Experiment is not None:
             experiment.add_artifact(PLOT_FILE)
             experiment.add_artifact(model_path)
 

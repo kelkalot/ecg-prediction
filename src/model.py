@@ -62,8 +62,9 @@ class ECGModel2D(BaseModel):
     def build_model(self):
         inputs = Input(shape=self.input_shape)
 
-        x = Conv2D(600, (3, 3), activation='relu')(inputs)
-        x = Conv2D(248, (3, 3), activation='relu')(x)
+        x = Conv2D(1024, (3, 3), activation='relu')(inputs)
+        x = Conv2D(512, (3, 3), activation='relu')(x)
+        x = Conv2D(256, (3, 3), activation='relu')(x)
 
         x = MaxPooling2D(pool_size=(2, 2))(x)
 
@@ -73,57 +74,6 @@ class ECGModel2D(BaseModel):
         x = Dense(128, activation='relu')(x)
         x = Dropout(0.5)(x)
         
-        output = Dense(self.output_size)(x)
-
-        model = Model(inputs=inputs, outputs=output)
-
-        self.model = model
-    
-
-
-
-class ECGBetterModel(BaseModel):
-
-    def __init__(self, *args, **kwargs):
-        super(ECGBetterModel, self).__init__(*args, **kwargs)
-
-    def build_model(self):
-        inputs = Input(shape=self.input_shape)
-
-        x = Conv1D(1200, 2, activation='relu')(inputs)
-        x = Conv1D(600, 2, activation='relu')(x)
-
-        x = MaxPooling1D(2)(x)
-
-        x = Conv1D(200, 2, activation='relu')(x)
-        x = Conv1D(200, 2, activation='relu')(x)
-
-        x = GlobalAveragePooling1D()(x)
-
-        output = Dense(self.output_size)(x)
-
-        model = Model(inputs=inputs, outputs=output)
-
-        self.model = model
-
-class ECGModelBest(BaseModel):
-
-    def __init__(self, *args, **kwargs):
-        super(ECGModelBest, self).__init__(*args, **kwargs)
-
-    def build_model(self):
-        inputs = Input(shape=self.input_shape)
-
-        x = Conv1D(32, 2, activation='relu')(inputs)
-        x = Conv1D(32, 2, activation='relu')(x)
-
-        x = MaxPooling1D(2)(x)
-
-        x = Conv1D(64, 2, activation='relu')(x)
-        x = Conv1D(64, 2, activation='relu')(x)
-
-        x = GlobalAveragePooling1D()(x)
-        x = Dropout(0.5)(x)
         output = Dense(self.output_size)(x)
 
         model = Model(inputs=inputs, outputs=output)
