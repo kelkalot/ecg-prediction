@@ -1,8 +1,10 @@
 import numpy as np
 import os
 import csv
+import argparse
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 from utils import read_csv
 
@@ -28,8 +30,7 @@ def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
         plt.plot(range(len(row)), row, color=PLOT_COLORS[index])
 
     plt.axis('off')
-    plt.tick_params(axis='x', which='major')
-    plt.savefig(os.path.join(save_path, f'{ ecg_id }.pdf'), format='pdf')
+    plt.savefig(os.path.join(save_path, f'{ ecg_id }.png'), format='png')
     plt.clf()
 
 if __name__ == '__main__':
@@ -38,7 +39,14 @@ if __name__ == '__main__':
 
     for index, ecg_file in enumerate(median_files):
         print(f'Generating features: { index + 1 } / { len(median_files) }', end='\r')
-        ecg_data = read_csv(os.path.join(MEDIANS_PATH, ecg_file), delimiter=' ', transpose=True, skip_header=False, dtype=np.int)
+
+        ecg_data = read_csv(
+            os.path.join(MEDIANS_PATH, ecg_file),
+            delimiter=' ',
+            transpose=True,
+            skip_header=False,
+            dtype=np.int)
+
         generate_ecg_plot(ecg_data, os.path.splitext(ecg_file)[0], MEDIANS_PLOT_PATH)
     
     print('\n', end='\r')

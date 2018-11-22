@@ -20,8 +20,8 @@ import os
 from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
 from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS
 from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, RHYTHM_PATH
-from settings import MODEL_FILE, LOSS_FUNCTION, OPTIMIZER, METRICS
-from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT
+from settings import MODEL_PATH, LOSS_FUNCTION, OPTIMIZER, METRICS
+from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT, MODEL_CALLBACKS
 
 tf.set_random_seed(SEED)
 np.random.seed(SEED)
@@ -54,12 +54,13 @@ def train():
             epochs=EPOCHS,
             batch_size= BATCH_SIZE,
             verbose=1,
+            callbacks=MODEL_CALLBACKS,
             validation_data=(x_test, y_test),
             shuffle=True)
 
         plot_loss(history, PLOT_FILE)
 
-        model_path = f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5'
+        model_path = f'{ os.path.splitext(MODEL_PATH)[0] }_{ fold_index }.h5'
         model.save(model_path)
 
         if Experiment is not None:

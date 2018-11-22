@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 from settings import PREDICTION_LABELS, X_TRANSPOSE, K_FOLDS
-from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, MODEL_FILE
+from settings import GROUND_TRUTH_PATH, MEDIANS_PATH, MODEL_PATH
 
 GROUND_TRUTH = read_csv(
     csv_file=GROUND_TRUTH_PATH,
@@ -23,7 +23,7 @@ x_data, y_data = prepare_csv_data(
 
 for fold_index, (x_train, x_test, y_train, y_test) in enumerate(k_fold(x_data, y_data, K_FOLDS)):
     
-    model = load_model(f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5')
+    model = load_model(f'{ os.path.splitext(MODEL_PATH)[0] }_{ fold_index }.h5')
     
     for row_index, row in enumerate(x_test):
         prediction = np.round(model.predict(row.reshape((1, *row.shape))).flatten())

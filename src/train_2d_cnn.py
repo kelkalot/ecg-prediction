@@ -2,10 +2,10 @@ from model import ECGModel2D
 
 from utils import prepare_image_data, k_fold, read_csv, plot_loss
 
-from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE
+from settings import PREDICTION_LABELS, EPOCHS, PLOT_FILE, MODEL_CALLBACKS
 from settings import GROUND_TRUTH_PATH, MEDIANS_IMAGE_PATH, METRICS
 from settings import X_TRANSPOSE, BATCH_SIZE, SEED, K_FOLDS, LOSS_FUNCTION
-from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT, MODEL_FILE, IMAGE_SHAPE
+from settings import EXPERIMENT_NAME, EXPERIMENT_ROOT, MODEL_PATH, IMAGE_SHAPE
 
 import os
 
@@ -43,12 +43,13 @@ def train():
                 batch_size=BATCH_SIZE,
                 epochs=EPOCHS,
                 verbose=1,
+                callbacks=MODEL_CALLBACKS,
                 validation_data=(x_test, y_test),
                 shuffle=True)
         
         plot_loss(history, PLOT_FILE)
 
-        model_path = f'{ os.path.splitext(MODEL_FILE)[0] }_{ fold_index }.h5'
+        model_path = f'{ os.path.splitext(MODEL_PATH)[0] }_{ fold_index }.h5'
         model.save(model_path)
 
         if Experiment is not None:

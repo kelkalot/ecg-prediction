@@ -1,5 +1,7 @@
 from keras.optimizers import Nadam
+from keras.callbacks import TensorBoard
 
+import os
 
 DATA_LABELS = {
     'TestID': 0, 'VentricularRate': 1, 'P_RInterval': 2, 'QRSDuration': 3,
@@ -8,8 +10,11 @@ DATA_LABELS = {
     'TOffset': 14
 }
 
+
+ROOT_DIRECTORY = '/home/steven/Dropbox/Github/ecg-prediction'
+
 PREDICTION_LABELS = [
-    'QOnset'
+    'TOffset'
 ]
 
 EPOCHS = 5000
@@ -22,21 +27,25 @@ IMAGE_SHAPE = (8, 600, 3)
 
 METRICS = [ 'mse' ]
 
-GROUND_TRUTH_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/ground_truth.csv'
-MEDIANS_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians'
-RHYTHM_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/rhythm'
+MODEL_CALLBACKS = [
+    TensorBoard(log_dir='../logs', batch_size=BATCH_SIZE)
+]
 
-MEDIANS_IMAGE_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_images'
-MEDIANS_FEATURE_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_features'
-MEDIANS_PLOT_PATH = '/home/steven/Dropbox/Github/ecg-prediction/data/medians_plots'
+PLOT_FILE = 'loss_plot.png'
+MODEL_FILE = 'model.h5'
+
+GROUND_TRUTH_PATH = os.path.join(ROOT_DIRECTORY, 'data/ground_truth.csv')
+MEDIANS_PATH = os.path.join(ROOT_DIRECTORY, 'data/medians')
+RHYTHM_PATH = os.path.join(ROOT_DIRECTORY, 'data/rhythm')
+MEDIANS_IMAGE_PATH = os.path.join(ROOT_DIRECTORY, 'data/medians_images')
+MEDIANS_FEATURE_PATH = os.path.join(ROOT_DIRECTORY, 'data/medians_features')
+MEDIANS_PLOT_PATH = os.path.join(ROOT_DIRECTORY, 'data/medians_plots')
+EXPERIMENT_ROOT = os.path.join(ROOT_DIRECTORY, 'experiments')
+MODEL_PATH = os.path.join(ROOT_DIRECTORY, MODEL_FILE)
 
 EXPERIMENT_NAME = 'ECG_CNN_MODEL'
-EXPERIMENT_ROOT = '/home/steven/Dropbox/Github/ecg-prediction/experiments'
-
-MODEL_FILE = '/home/steven/Dropbox/Github/ecg-prediction/model.h5'
 
 LOSS_FUNCTION = 'mean_squared_logarithmic_error'
 OPTIMIZER = 'nadam'
 
-PLOT_FILE = 'loss_plot.png'
 
