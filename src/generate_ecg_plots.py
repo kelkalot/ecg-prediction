@@ -72,6 +72,7 @@ if __name__ == '__main__':
     for index, ecg_file in enumerate(median_files):
         print(f'Generating plots: { index + 1 } / { len(median_files) }', end='\r')
 
+        # Read ECG data from .asc file
         ecg_data = read_csv(
             os.path.join(MEDIANS_PATH, ecg_file),
             delimiter=' ',
@@ -88,9 +89,11 @@ if __name__ == '__main__':
         # Reduce the length of ECG data by dropping every other element
         ecg_reduced = shorten(ecg_scaled)
 
+        # Remove the first n values to fit within the X_MAX limit
         if len(ecg_reduced[0]) > X_MAX:
             ecg_reduced = [ ecg_values[len(ecg_values) - X_MAX:] for ecg_values in ecg_reduced ]
 
+        # Generate ECG plot
         generate_ecg_plot(ecg_reduced, os.path.splitext(ecg_file)[0], MEDIANS_PLOT_PATH)
     
     print('\n', end='\r')

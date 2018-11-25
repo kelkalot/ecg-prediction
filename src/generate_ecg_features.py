@@ -48,6 +48,8 @@ if __name__ == '__main__':
         medians_path = os.path.join(MEDIANS_PATH, f'{ row[0] }.asc')
 
         if os.path.exists(medians_path):
+
+            # Read ECG data from .asc file
             ecg_data = read_csv(
                 medians_path,
                 delimiter=' ',
@@ -55,6 +57,7 @@ if __name__ == '__main__':
                 skip_header=False,
                 dtype=np.int)
             
+            # Generate ECG feature vector
             ecg_feature = generate_ecg_feature(
                 ecg_data,
                 row[0],

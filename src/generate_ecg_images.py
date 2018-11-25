@@ -54,7 +54,13 @@ if __name__ == '__main__':
     for index, ecg_file in enumerate(os.listdir(MEDIANS_PATH)):
         print(f'Generating images: { index + 1 } / { len(os.listdir(MEDIANS_PATH)) }', end='\r')
         
-        ecg_data = read_csv(os.path.join(MEDIANS_PATH, ecg_file), delimiter=' ', transpose=True, skip_header=False, dtype=np.int)
+        # Read ECG data from .asc file
+        ecg_data = read_csv(
+            os.path.join(MEDIANS_PATH, ecg_file),
+            delimiter=' ',
+            transpose=True,
+            skip_header=False,
+            dtype=np.int)
 
         # Normalize ECG data between -1 and 1
         ecg_normalized = normalize(ecg_data)
@@ -62,6 +68,7 @@ if __name__ == '__main__':
         # Scale normlaized ECG data between -Y_MAX and Y_MAX
         ecg_scaled = np.array(ecg_normalized * Y_MAX, dtype=int)
 
+        # Generate ECG image
         generate_ecg_image(ecg_data, os.path.splitext(ecg_file)[0], MEDIANS_IMAGE_PATH)
     
     print('\n', end='\r')
