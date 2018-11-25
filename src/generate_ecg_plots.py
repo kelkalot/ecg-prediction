@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import csv
+import shutil
 import argparse
 
 import matplotlib.pyplot as plt
@@ -28,6 +29,9 @@ PLOT_COLORS = [
 Y_TOP_LIMIT = 3000
 Y_BOTTOM_LIMIT = -3000
 
+Y_MAX = 299
+X_MAX = 299
+
 def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
 
     if not os.path.exists(save_path):
@@ -41,20 +45,29 @@ def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
         x = range(len(row))
         y = row
 
-        # x_smooth = np.linspace(min(x), max(x), 600)
+        # x_smooth = np.linspace(min(x), max(x), len(x))
         # y_smooth = spline(x, y, x_smooth)
         
         plt.plot(x, y, color=PLOT_COLORS[index], linewidth=0.1)
 
     plt.ylim(Y_BOTTOM_LIMIT, Y_TOP_LIMIT)
     plt.savefig(os.path.join(save_path, f'{ ecg_id }.{ PLOT_FORMAT }'), format=PLOT_FORMAT)
-    plt.clf()
-    plt.cla()
     plt.close()
+
+def normalize(x):
+    return (2 * ((x - x.min()) / (x.max() - x.min()))) - 1
+
+def shorten(x):
+    return [y[1::2] for y in x]
+
+
 
 if __name__ == '__main__':
 
     median_files = sorted(os.listdir(MEDIANS_PATH))
+    
+    if os.path.exists(MEDIANS_PLOT_PATH):
+        shutil.rmtree(MEDIANS_PLOT_PATH)
 
     for index, ecg_file in enumerate(median_files):
         print(f'Generating plots: { index + 1 } / { len(median_files) }', end='\r')
@@ -66,6 +79,15 @@ if __name__ == '__main__':
             skip_header=False,
             dtype=np.int)
 
-        generate_ecg_plot(ecg_data, os.path.splitext(ecg_file)[0], MEDIANS_PLOT_PATH)
+        # Normalize ECG data between -1 and 1
+        ecg_normalized = normalize(ecg_data)
+
+        # Scale normlaized ECG data between -Y_MAX and Y_MAX
+        ecg_scaled = np.array(ecg_normalized * Y_MAX, dtype=int)
+
+        # Reduce the length of ECG data by dropping every other element
+        ecg_reduced = shorten(ecg_scaled)
+
+        generate_ecg_plot(ecg_reduced, os.path.splitext(ecg_file)[0], MEDIANS_PLOT_PATH)
     
     print('\n', end='\r')
