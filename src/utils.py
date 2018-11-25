@@ -56,6 +56,11 @@ def read_image(image_file, image_shape):
 
     return image_tensor
 
+def normalize(x):
+    return (2 * ((x - x.min()) / (x.max() - x.min()))) - 1
+
+def shorten(x):
+    return [y[1::2] for y in x]
 
 def prepare_csv_data(data, prediction_labels, training_path, x_shape=None):
 

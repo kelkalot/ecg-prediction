@@ -9,7 +9,7 @@ import matplotlib.ticker as ticker
 
 # from scipy.interpolate import spline
 
-from utils import read_csv
+from utils import read_csv, normalize, shorten
 
 from settings import MEDIANS_PATH, MEDIANS_PLOT_PATH
 
@@ -37,7 +37,7 @@ def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     
-    plt.figure(dpi=PLOT_DPI)
+    # plt.figure(dpi=PLOT_DPI)
     plt.axis('off')
 
     for index, row in enumerate(ecg_data):
@@ -51,16 +51,16 @@ def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
         plt.plot(x, y, color=PLOT_COLORS[index], linewidth=0.1)
 
     plt.ylim(Y_BOTTOM_LIMIT, Y_TOP_LIMIT)
-    plt.savefig(os.path.join(save_path, f'{ ecg_id }.{ PLOT_FORMAT }'), format=PLOT_FORMAT)
+
+    plt.savefig(os.path.join(
+        save_path,
+        f'{ ecg_id }.{ PLOT_FORMAT }'),
+        format=PLOT_FORMAT,
+        transparent=False,
+        bbox_inches='tight',
+        pad_inches=0)
+
     plt.close()
-
-def normalize(x):
-    return (2 * ((x - x.min()) / (x.max() - x.min()))) - 1
-
-def shorten(x):
-    return [y[1::2] for y in x]
-
-
 
 if __name__ == '__main__':
 
@@ -87,6 +87,9 @@ if __name__ == '__main__':
 
         # Reduce the length of ECG data by dropping every other element
         ecg_reduced = shorten(ecg_scaled)
+
+        if len(ecg_reduced[0]) > X_MAX:
+            ecg_reduced = [ ecg_values[len(ecg_values) - X_MAX:] for ecg_values in ecg_reduced ]
 
         generate_ecg_plot(ecg_reduced, os.path.splitext(ecg_file)[0], MEDIANS_PLOT_PATH)
     

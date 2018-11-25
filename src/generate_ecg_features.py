@@ -2,6 +2,7 @@
 import numpy as np
 import os
 import csv
+import shutil
 
 from utils import read_csv
 
@@ -27,6 +28,10 @@ def generate_ecg_feature(ecg_data, ecg_id, ground_truth, save_path=None):
 
 if __name__ == '__main__':
 
+
+    if os.path.exists(MEDIANS_FEATURE_PATH):
+        shutil.rmtree(MEDIANS_FEATURE_PATH)
+
     feature_vectors = []
 
     ground_truth = read_csv(
@@ -39,10 +44,25 @@ if __name__ == '__main__':
 
     for index, row in enumerate(ground_truth):
         print(f'Generating features: { index + 1 } / { len(ground_truth) }', end='\r')
-        try:
-            ecg_data = read_csv(os.path.join(MEDIANS_PATH, f'{ row[0] }.asc'), delimiter=' ', transpose=True, skip_header=False, dtype=np.int)
-            feature_vectors.append(generate_ecg_feature(ecg_data, row[0], MEDIANS_FEATURE_PATH, [ int(row[ index ]) for index in prediction_indicies ]))
-        except:
-            pass
+        
+        medians_path = os.path.join(MEDIANS_PATH, f'{ row[0] }.asc')
+
+        if os.path.exists(medians_path):
+            ecg_data = read_csv(
+                medians_path,
+                delimiter=' ',
+                transpose=True,
+                skip_header=False,
+                dtype=np.int)
+            
+            ecg_feature = generate_ecg_feature(
+                ecg_data,
+                row[0],
+                [ int(row[ index ]) for index in prediction_indicies ],
+                MEDIANS_FEATURE_PATH)
+
+            feature_vectors.append(ecg_feature)
 
     np.savetxt(os.path.join(MEDIANS_FEATURE_PATH, f'all_patients.csv'), feature_vectors, fmt='%i', delimiter=',')
+
+    print('\n', end='\r')
