@@ -6,6 +6,7 @@ import argparse
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from PIL import Image
 
 # from scipy.interpolate import spline
 
@@ -13,7 +14,6 @@ from utils import read_csv, normalize, shorten
 
 from settings import MEDIANS_PATH, MEDIANS_PLOT_PATH
 
-PLOT_DPI = 500
 PLOT_FORMAT = 'png'
 PLOT_COLORS = [
     '#000000',
@@ -26,18 +26,20 @@ PLOT_COLORS = [
     '#000000',
 ]
 
-Y_TOP_LIMIT = 3000
-Y_BOTTOM_LIMIT = -3000
+PLOT_DPI = 299
 
 Y_MAX = 299
 X_MAX = 299
 
-def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
+Y_TOP_LIMIT = 3000
+Y_BOTTOM_LIMIT = -3000
 
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
+def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
+   
+    if not os.path.exists(os.path.dirname(save_path)):
+        os.makedirs(os.path.dirname(save_path))
     
-    # plt.figure(dpi=PLOT_DPI)
+    plt.figure(figsize=(X_MAX / PLOT_DPI, Y_MAX / PLOT_DPI), dpi=PLOT_DPI)
     plt.axis('off')
 
     for index, row in enumerate(ecg_data):
@@ -52,13 +54,9 @@ def generate_ecg_plot(ecg_data, ecg_id, save_path=None):
 
     plt.ylim(Y_BOTTOM_LIMIT, Y_TOP_LIMIT)
 
-    plt.savefig(os.path.join(
+    plt.savefig(
         save_path,
-        f'{ ecg_id }.{ PLOT_FORMAT }'),
-        format=PLOT_FORMAT,
-        transparent=False,
-        bbox_inches='tight',
-        pad_inches=0)
+        format=PLOT_FORMAT)
 
     plt.close()
 
@@ -71,6 +69,10 @@ if __name__ == '__main__':
 
     for index, ecg_file in enumerate(median_files):
         print(f'Generating plots: { index + 1 } / { len(median_files) }', end='\r')
+
+        ecg_id = os.path.splitext(ecg_file)[0]
+
+        file_path = os.path.join(MEDIANS_PLOT_PATH, f'{ ecg_id }.{ PLOT_FORMAT }')
 
         # Read ECG data from .asc file
         ecg_data = read_csv(
@@ -94,6 +96,15 @@ if __name__ == '__main__':
             ecg_reduced = [ ecg_values[len(ecg_values) - X_MAX:] for ecg_values in ecg_reduced ]
 
         # Generate ECG plot
-        generate_ecg_plot(ecg_reduced, os.path.splitext(ecg_file)[0], MEDIANS_PLOT_PATH)
+        generate_ecg_plot(ecg_data, ecg_id, file_path)
+
+        plot_image = Image.open(file_path).convert('L')
+        plot_image = np.array(plot_image)
+
+        # plot_image = plot_image[~np.all(plot_image == 255, axis=1)]
+        plot_image = plot_image.compress(~np.all(plot_image == 255, axis=0), axis=1)
+        plot_image = Image.fromarray(plot_image, 'L')
+
+        plot_image.save(file_path)
     
     print('\n', end='\r')
